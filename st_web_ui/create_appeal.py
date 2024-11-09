@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 import streamlit as st
 from configs import StConfig
-from st_styles.base import header
+from st_styles.base import header, appeal_info_style
 from typing import Dict
 
 # Загружаем конфигурационные настройки
@@ -20,11 +20,20 @@ def print_processed_appeal(response: Dict[str, str]):
         response (Dict[str, str]): Словарь с данными обращения.
     """
     # Проходим по всем ключам в response и выводим их, если они есть в json_key_mapping
-    for key, val in response.items():
-        if key not in config.json_key_mapping:
-            continue
-        key = config.json_key_mapping.get(key, key)  # Получаем русское название ключа
-        st.markdown(f"**{key}:** {val}")  # Отображаем ключ и значение
+    with st.container():
+        appeal_info_style()
+        st.markdown('<div class="ticket-container">', unsafe_allow_html=True)
+        for key, val in response.items():
+            if key not in config.json_key_mapping:
+                continue
+            key = config.json_key_mapping.get(key, key)  # Get the Russian name if available
+            
+            # Create a nice separator line after each ticket entry
+            st.markdown(f'<div class="section-title">{key}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="key"> </div><div class="value">{val}</div>', unsafe_allow_html=True)
+            st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
 
 def create_appeal():
     """

@@ -1,7 +1,6 @@
 import datetime
 from fastapi import APIRouter
 from .models import InputData, ResponseData
-from .utils import generate_response
 from .classifier.pipeline import extract_and_classify
 router = APIRouter()
 

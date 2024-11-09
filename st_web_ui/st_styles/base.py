@@ -67,6 +67,19 @@ def get_color_discrete_sequence():
             "#d5dae5",
         ]
 
+def appeal_info_style():
+     st.markdown(
+            """
+            <style>
+                .key { font-weight: bold; color: #4CAF50; }
+                .value { font-size: 16px; color: #2C3E50; }
+                .separator { border-top: 1px solid #BDC3C7; margin: 10px 0; }
+                .ticket-container { background-color: #f9f9f9; padding: 20px; border-radius: 10px; }
+                .section-title { font-size: 18px; font-weight: bold; color: #34495E; }
+            </style>
+            """, unsafe_allow_html=True
+        )
+
 
 sidebar_title = """
         <head>
