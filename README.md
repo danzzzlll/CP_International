@@ -6,6 +6,7 @@ project/
 │
 ├── st_web_up/
 │   ├── __init__.py              
+|   ├── db.py                     # Реализация базы данных
 │   ├── streamlit_app.py          # Основной файл для запуска Streamlit приложения
 │   ├── create_appeal.py          # Функции для создания обращений и их обработки
 │   ├── analytics.py              # Функции для отображения аналитики
@@ -68,6 +69,8 @@ streamlit run st_web_ui/streamlit_app.py
 **Модель `ResponseData`**:
 ```json
 {
+  "created_at": "string",       // Дата создания (строка)
+  "status": "string",           // Статус обращения (строка)                 
   "topic": "string",            // Тема обращения (строка)
   "description": "string",      // Описание обращения (строка)
   "device": "string",           // Тип устройства (строка)
@@ -85,6 +88,8 @@ streamlit run st_web_ui/streamlit_app.py
 #### Пример ответа
 ```json
 {
+  "created_at": "2024-10-11 12:14:30",
+  "status": "To Do",
   "topic": "Ошибка при включении устройства",
   "description": "Устройство не включается после обновления ПО.",
   "device": "Ноутбук",

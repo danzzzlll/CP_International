@@ -58,13 +58,13 @@ def analytics_page():
 
         day_point_count = df_filtered.groupby(
             [df_filtered['created_at'],
-             'device']
+                'device']
             ).size().reset_index(name='Количество')
         fig4 = px.line(
             day_point_count,
             x='created_at',
             y='Количество',
-            color='Тип оборудования',
+            color='device',
             title='Кол-во обращений по типу обращения',
             color_discrete_sequence=color_discrete_sequence
         )
@@ -91,6 +91,6 @@ def analytics_page():
                 data=pdf_buffer,
                 file_name="plots.pdf",
                 mime="application/pdf"
-            )
+                )
     except:
         pass
