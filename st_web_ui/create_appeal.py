@@ -8,7 +8,10 @@ from typing import Dict
 config = StConfig()
 
 def print_processed_appeal(response: Dict[str, str]):
+    print(response)
     for key, val in response.items():
+        if key not in config.json_key_mapping:
+            continue
         key = config.json_key_mapping.get(key, key)
         st.markdown(f"**{key}:** {val}")
 
@@ -33,6 +36,8 @@ def create_appeal():
                     response = requests.post(config.api_url, data=json.dumps(payload), headers=config.headers)
                     if response.status_code == 200:
                         st.session_state.response = response.json()
+                        print(response.json())
+                        st.session_state.db.add_row(response.json())
                         st.session_state.process_btn = True
                         st.rerun()
                     else:

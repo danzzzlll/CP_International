@@ -1,4 +1,5 @@
 import pandas as pd
+import datetime
 import plotly.express as px
 import streamlit as st
 from st_styles.base import (
@@ -10,11 +11,9 @@ from utils import generate_pdf_and_download
 
 def analytics_page():
     header(True)
-    df = pd.read_csv('data/date_status_data.csv')
-    st.markdown(f"**Суммарное кол-во записей:** {len(df)}")
+    df = st.session_state.db.load_to_dataframe()
     color_discrete_sequence = get_color_discrete_sequence()
-    
-    df['created_at'] = pd.to_datetime(df['created_at'], errors='coerce').dt.date
+    df['created_at'] = pd.to_datetime(df['created_at'], format='mixed').dt.date
     dates = st.date_input("Выберете даты", value=[df['created_at'].min(), df['created_at'].max()])
     try:
         start_date, end_date = dates
@@ -22,7 +21,7 @@ def analytics_page():
 
         st.markdown(f"**Отображается кол-во записей за выбранный период:** {len(df_filtered)}")
 
-        failure_point_count = df_filtered['Точка отказа'].value_counts().reset_index()
+        failure_point_count = df_filtered['failure_point'].value_counts().reset_index()
         failure_point_count.columns = ['Точка отказа', 'Количество']
         fig2 = px.pie(
             failure_point_count,
@@ -33,7 +32,7 @@ def analytics_page():
         )
         st.plotly_chart(fig2)
 
-        topic_count = df_filtered['Тип оборудования'].value_counts().reset_index()
+        topic_count = df_filtered['device'].value_counts().reset_index()
         topic_count.columns = ['Тип оборудования', 'Количество']
         fig1 = px.bar(
             topic_count,
@@ -59,7 +58,7 @@ def analytics_page():
 
         day_point_count = df_filtered.groupby(
             [df_filtered['created_at'],
-             'Тип оборудования']
+             'device']
             ).size().reset_index(name='Количество')
         fig4 = px.line(
             day_point_count,

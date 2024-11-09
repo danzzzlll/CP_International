@@ -1,16 +1,16 @@
-import streamlit as st
 from create_appeal import create_appeal
 from analytics import analytics_page
-
-
-
+from db import SQLiteManager
 import pandas as pd
 import streamlit as st
+import os
 from st_styles.base import header
+from create_appeal import config
 
 def appeals():
     header(True)
-    df = pd.read_csv('data/date_status_data.csv')
+    df = st.session_state.db.load_to_dataframe()
+    df['created_at'] = pd.to_datetime(df['created_at'], format='mixed')
     tasks_statuses = ["To Do", "In Progress", "Done", "Reopened", "On Hold"]
 
     selected_statuses = st.multiselect(
@@ -22,6 +22,10 @@ def appeals():
     st.dataframe(filtered_df, width=1000, height=600)
 
 def main():
+    if 'db' not in st.session_state:
+        os.remove(config.db_name)
+        st.session_state.db = SQLiteManager(config.db_name)
+        st.session_state.db.init_db_from_csv(config.init_csv)
     sidebar_title = """
         <head>
             <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">

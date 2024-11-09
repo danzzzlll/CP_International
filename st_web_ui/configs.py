@@ -4,6 +4,8 @@ from pydantic_settings import BaseSettings
 
 class StConfig(BaseSettings):
     api_url: str = "http://localhost:8000/generate"
+    db_name: str = "appeals.db"
+    init_csv: str = "data/date_status_data.csv"
     headers: Dict[str, str] = {
         "Content-Type": "application/json"
     }
