@@ -1,5 +1,6 @@
 import json
 import requests
+import pandas as pd
 import streamlit as st
 from configs import StConfig
 from st_styles.base import header
@@ -18,7 +19,6 @@ def print_processed_appeal(response: Dict[str, str]):
     Аргументы:
         response (Dict[str, str]): Словарь с данными обращения.
     """
-    print(response)
     # Проходим по всем ключам в response и выводим их, если они есть в json_key_mapping
     for key, val in response.items():
         if key not in config.json_key_mapping:
@@ -51,6 +51,20 @@ def create_appeal():
     # Если в сессии есть сохраненный ответ, выводим его
     if st.session_state.response:
         print_processed_appeal(st.session_state.response)
+    if uploaded_file:
+        if uploaded_file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+            # Чтение Excel файла
+            df = pd.read_excel(uploaded_file)
+        elif uploaded_file.type == "text/csv":
+            # Чтение CSV файла
+            df = pd.read_csv(uploaded_file)
+
+        # Проверка необходимых колонок
+        if "Тема" in df.columns and "Описание" in df.columns:
+            payloads = df[["Тема", "Описание"]].to_dict(orient="records")
+            st.write(f"Загруженные данные: {payloads}")
+        else:
+            st.error('Файл должен содержать столбцы "Тема" и "Описание".')
 
     # Если кнопка обработки не была нажата, показываем поля ввода
     if not st.session_state.process_btn:
@@ -59,22 +73,38 @@ def create_appeal():
 
         # Если файл загружен или введены текстовые данные, показываем кнопку обработки
         if uploaded_file or (description_input and topic_input):
-            if st.button("Обработать"):
-                files = {"file": uploaded_file} if uploaded_file else None  # Подготавливаем файл для отправки
-                payload = {"topic": topic_input, "description": description_input}  # Подготавливаем данные для запроса
+            if uploaded_file or (description_input and topic_input):
+                if st.button("Обработать"):
+                    # Если был загружен файл обрабатываем его построчно
+                    if uploaded_file:
+                        for payload in payloads:
+                            try:
+                                #Отправка каждой строки на api service
+                                response = requests.post(config.api_url, data=json.dumps(payload), headers=config.headers)
 
-                try:
-                    # Отправляем запрос на сервер
-                    response = requests.post(config.api_url, data=json.dumps(payload), headers=config.headers)
+                                # Обработка запроса
+                                if response.status_code == 200:
+                                    st.session_state.response = response.json()  # Сохранение в сессию
+                                    st.session_state.db.add_row(response.json())  # Добавлени в БД
+                                    st.session_state.process_btn = True
+                                else:
+                                    st.error(f"Ошибка: {response.status_code}. {response.text}")
+                            except requests.exceptions.RequestException as e:
+                                st.error(f"Ошибка запроса: {e}")
+                    
+                    # Обработка ручного ввода
+                    elif topic_input and description_input:
+                        payload = {"topic": topic_input, "description": description_input}
+                        try:
+                            response = requests.post(config.api_url, data=json.dumps(payload), headers=config.headers)
 
-                    # Если ответ успешный, сохраняем данные и перезагружаем страницу
-                    if response.status_code == 200:
-                        st.session_state.response = response.json()  # Сохраняем ответ в сессии
-                        print(response.json())  # Выводим ответ в консоль
-                        st.session_state.db.add_row(response.json())  # Добавляем данные в базу данных
-                        st.session_state.process_btn = True  # Устанавливаем флаг обработки
-                        st.rerun()  # Перезагружаем страницу
-                    else:
-                        st.error(f"Ошибка: {response.status_code}. {response.text}")  # Ошибка запроса
-                except requests.exceptions.RequestException as e:
-                    st.error(f"Ошибка запроса: {e}")  # Обработка исключений запросов
+                            if response.status_code == 200:
+                                st.session_state.response = response.json()
+                                st.session_state.db.add_row(response.json())  # Добавление в БД
+                                st.session_state.process_btn = True
+                                st.rerun()
+                            else:
+                                st.error(f"Ошибка: {response.status_code}. {response.text}")
+                        except requests.exceptions.RequestException as e:
+                            st.error(f"Ошибка запроса: {e}")
+
