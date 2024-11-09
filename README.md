@@ -1,5 +1,5 @@
 # Решений кейса ...
-![](meterials/st_analytics.PNG)
+![](materials/st_analytics.PNG)
 ## Структура решения
 ```
 project/
