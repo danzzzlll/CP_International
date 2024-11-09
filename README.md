@@ -15,6 +15,11 @@ project/
 │   │   └── base.py               # Стили для Streamlit
 │
 ├── app/
+│   ├── classifier
+│   │   ├── extract_series_number.py # Извлечение серийного номер
+|   |   ├── keywords.py              # Ключевые слова для модели
+|   |   ├── model.py                 # Релизация Модели
+|   |   ├── pipeline.py              # Пайплайн извелечения всех атрибутов
 │   ├── __init__.py
 │   ├── main.py                  # Основной файл API
 │   ├── models.py                # Модели данных для запросов и ответов
