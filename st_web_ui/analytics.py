@@ -15,7 +15,7 @@ def analytics_page():
     color_discrete_sequence = get_color_discrete_sequence()
     
     df['created_at'] = pd.to_datetime(df['created_at'], errors='coerce').dt.date
-    dates = st.date_input("Select date range", value=[df['created_at'].min(), df['created_at'].max()])
+    dates = st.date_input("Выберете даты", value=[df['created_at'].min(), df['created_at'].max()])
     try:
         start_date, end_date = dates
         df_filtered = df[(df['created_at'] >= start_date) & (df['created_at'] <= end_date)]
