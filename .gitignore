@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-appeals.db
+*.db
 test.py
 materials/presentation
 materials/presentation.zip
