@@ -1,4 +1,4 @@
-# Решений кейса ...
+# Решение кейса Автоматическая диспетчеризация заявок Цифровой Прорыв
 ![](materials/st_analytics.PNG)
 ## Структура решения
 ```
@@ -34,7 +34,7 @@ uvicorn app.app:app --reload
 ```
 2. Запуск web user interface
 ```
-streamlit run streamlit_app.py
+streamlit run st_web_ui/streamlit_app.py
 ```
 ## API Документация
 
