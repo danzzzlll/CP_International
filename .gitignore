@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+appeals.db
+test.py
+materials/presentation
+materials/presentation.zip
 # C extensions
 *.so
 evn

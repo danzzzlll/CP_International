@@ -5,16 +5,25 @@ from typing import Dict
 
 class SQLiteManager:
     def __init__(self, db_name: str):
+        """
+        Инициализация менеджера базы данных с заданным именем базы данных.
+        При инициализации создается база данных и таблица, если они не существуют.
+
+        Аргументы:
+            db_name (str): Имя файла базы данных.
+        """
         self.db_name = db_name
         self._create_db_and_table()
 
     def _create_db_and_table(self):
-        """Create the SQLite database and table if they do not exist."""
+        """
+        Создает базу данных и таблицу 'tasks', если они еще не существуют.
+        """
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         
-        # Create table schema with specified columns
-        cursor.execute('''
+        # Создание схемы таблицы с указанными столбцами
+        cursor.execute(''' 
         CREATE TABLE IF NOT EXISTS tasks (
             created_at TEXT,
             status TEXT,
@@ -29,15 +38,21 @@ class SQLiteManager:
         conn.close()
 
     def init_db_from_csv(self, csv_file: str):
-        """Initialize the database by loading specified columns from a CSV file."""
+        """
+        Инициализирует базу данных путем загрузки данных из CSV файла.
+        Загрузка осуществляется только для выбранных столбцов.
+
+        Аргументы:
+            csv_file (str): Путь к CSV файлу.
+        """
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         
-        # Define the columns to extract
+        # Определяем столбцы, которые необходимо извлечь из CSV файла
         desired_columns = ['created_at', 'status', 'Тип оборудования', 'Точка отказа',
                            'Серийный номер', 'Тема', 'Описание']
         
-        # Map CSV columns to database columns
+        # Маппинг столбцов CSV на столбцы базы данных
         column_mapping = {
             'created_at': 'created_at',
             'status': 'status',
@@ -48,14 +63,14 @@ class SQLiteManager:
             'Описание': 'description'
         }
         
-        # Read CSV and insert only desired columns into the database
+        # Чтение CSV и вставка только нужных столбцов в базу данных
         with open(csv_file, 'r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
-                # Extract the necessary fields based on column_mapping
+                # Извлекаем необходимые данные на основе маппинга столбцов
                 extracted_data = {db_col: row[csv_col] for csv_col, db_col in column_mapping.items() if csv_col in row}
                 
-                cursor.execute('''
+                cursor.execute(''' 
                 INSERT INTO tasks (created_at, status, device, failure_point, serial_number, topic, description)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
                 ''', (
@@ -68,11 +83,17 @@ class SQLiteManager:
         conn.close()
 
     def add_row(self, data: Dict):
-        """Add a new row to the database."""
+        """
+        Добавляет новую строку в таблицу 'tasks'.
+
+        Аргументы:
+            data (Dict): Данные для добавления в таблицу. Ожидается, что в словаре будут ключи:
+                         'created_at', 'status', 'device', 'failure_point', 'serial_number', 'topic', 'description'.
+        """
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         
-        cursor.execute('''
+        cursor.execute(''' 
         INSERT INTO tasks (created_at, status, device, failure_point, serial_number, topic, description)
         VALUES (?, ?, ?, ?, ?, ?, ?)
         ''', (data['created_at'], data['status'], data['device'], data['failure_point'], 
@@ -82,7 +103,12 @@ class SQLiteManager:
         conn.close()
 
     def fetch_all(self):
-        """Fetch all rows from the tasks table."""
+        """
+        Извлекает все строки из таблицы 'tasks'.
+
+        Возвращает:
+            list: Список всех строк из таблицы.
+        """
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         
@@ -91,10 +117,14 @@ class SQLiteManager:
         
         conn.close()
         return rows
-    
 
     def load_to_dataframe(self) -> pd.DataFrame:
-        """Load the contents of the tasks table into a pandas DataFrame."""
+        """
+        Загружает содержимое таблицы 'tasks' в pandas DataFrame.
+
+        Возвращает:
+            pd.DataFrame: DataFrame с данными из таблицы 'tasks'.
+        """
         conn = sqlite3.connect(self.db_name)
         query = "SELECT * FROM tasks"
         df = pd.read_sql_query(query, conn)

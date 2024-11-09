@@ -66,3 +66,14 @@ def get_color_discrete_sequence():
             "#6d3fc0",
             "#d5dae5",
         ]
+
+
+sidebar_title = """
+        <head>
+            <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+        </head>
+        <div style="text-align: center; font-family: 'Roboto', sans-serif; padding-bottom: 30px;">
+            <span style="font-size: 44px; font-weight: bold; background: linear-gradient(90deg, #32CD32, #00FF7F); -webkit-background-clip: text; color: transparent;">Грин</span>
+            <span style="font-size: 44px; font-weight: bold; background: linear-gradient(90deg, #1E90FF, #00BFFF); -webkit-background-clip: text; color: transparent;"> МИСИС</span>
+        </div>
+    """
