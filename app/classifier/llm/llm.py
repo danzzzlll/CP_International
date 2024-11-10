@@ -1,8 +1,12 @@
-import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, pipeline
-import logging
-import re
 
+import re
+import torch
+import logging
+from transformers import (
+    AutoTokenizer,
+    AutoModelForCausalLM,
+    pipeline
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -11,6 +15,8 @@ logger = logging.getLogger(__name__)
 model_name = "Qwen/Qwen2.5-0.5B-Instruct"
 
 def load_llm(model_name=model_name):
+    """Загрузка llm модели
+    """
     tokenizer = AutoTokenizer.from_pretrained(
         model_name
     )
@@ -28,6 +34,8 @@ def load_llm(model_name=model_name):
 
 
 def extract_from_response(tmp):
+    """Извлечение приоритета из ответа LLM
+    """
     fault_point_pattern = r'"Приоритет":\s*"([^"]*)"'
     fault_point = re.search(fault_point_pattern, tmp)
     
