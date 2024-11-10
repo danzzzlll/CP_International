@@ -3,6 +3,8 @@ from typing import Tuple  # Импортируем для указания во�
 from .extract_series_number import extract_serial_number  # Импортируем функцию для извлечения серийного номера
 from .bert.bert import TypeBert  # Импортируем класс BERT для классификации
 from .llm.inference_llm import get_priority  # Импортируем функцию для определения приоритета
+from sklearn.metrics.pairwise import cosine_similarity
+
 
 # Функция для извлечения серийного номера и классификации с использованием модели TF-IDF
 def extract_and_classify(theme: str, description: str) -> Tuple[str, str, str]:
@@ -49,3 +51,20 @@ def bert_extract_and_classify(theme: str, description: str) -> Tuple[str, str, s
     
     # Возвращаем тип, stop_dot, серийный номер и приоритет
     return type_, stop_dot_, serial_number_, priority_
+
+
+def preset_search(element):
+    """
+        поиск по базе данных, берем по cosine similarity самое лучшее совпадение
+        выдает максимально похожее описание, и если удовлетворяет трешхолду, то можно получить Точку отказа
+    """
+    max_sim = 0
+    ans = ''
+    for i, el in enumerate(train['embedded']):
+        sim = cosine_similarity(el, element).flatten()
+        # print(sim)
+        if sim[0] > max_sim and sim[0] > 0.9:
+            ans = train.iloc[i]
+            max_sim = sim[0]
+    return ans, max_sim
+
