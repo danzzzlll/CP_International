@@ -1,7 +1,7 @@
 from pydantic_settings import BaseSettings
 
 class Config(BaseSettings):
-    pass
+    classifier: str = 'tfidf' # tfidf
 
     class Config:
         env_prefix = "APP_"

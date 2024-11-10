@@ -23,11 +23,18 @@ def print_processed_appeal(response: Dict[str, str]):
     with st.container():
         appeal_info_style()
         st.markdown('<div class="ticket-container">', unsafe_allow_html=True)
+        if response['device'] == "СХД":
+            response['priority'] = "Высокая"
+        elif response['device'] == "Ноутбук" or response['device'] == 'Сервер':
+            response['priority'] = "Средняя"
+
         for key, val in response.items():
-            if key not in config.json_key_mapping:
+            if key not in config.json_key_mapping and key != 'priority':
                 continue
-            key = config.json_key_mapping.get(key, key)  # Get the Russian name if available
-            
+            if key == 'priority':
+                key = 'Приоритет'
+            else:
+                key = config.json_key_mapping.get(key, key)  # Get the Russian name if available
             # Create a nice separator line after each ticket entry
             st.markdown(f'<div class="section-title">{key}</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="key"> </div><div class="value">{val}</div>', unsafe_allow_html=True)

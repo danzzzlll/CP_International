@@ -1,4 +1,3 @@
-import pandas as pd
 import re
 
 serial_number_regex = r'[CDE](\d{9})|CKM(\d{11})'

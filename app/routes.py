@@ -1,7 +1,12 @@
 import datetime
 from fastapi import APIRouter
+from .config import Config
 from .models import InputData, ResponseData
-from .classifier.pipeline import extract_and_classify
+from .classifier.pipeline import (
+    extract_and_classify, 
+    bert_extract_and_classify
+)
+
 router = APIRouter()
 
 @router.post("/generate", response_model=ResponseData)
@@ -19,11 +24,21 @@ async def generate(data: InputData):
         ResponseData: Сгенерированные данные, включающие информацию о создании, статусе,
         устройстве, точке сбоя и серийном номере.
     """
+    config = Config()
     # Генерация ответа с использованием функции generate_response
-    device, failure_point, serial_number  = extract_and_classify(
-        theme=data.topic,
-        description=data.description
-    )
+    if config.classifier ==  'tfidf': # 
+        device, failure_point, serial_number  = extract_and_classify(
+            theme=data.topic,
+            description=data.description
+        )
+    elif config.classifier == 'bert':
+        device, failure_point, serial_number  = bert_extract_and_classify(
+            theme=data.topic,
+            description=data.description
+        )
+    else:
+        raise ValueError(f"Invalid classifier type: {config.classifier}")
+
     current_date = str(datetime.datetime.now())
     return {
         "created_at": current_date,  # Время создания
