@@ -27,12 +27,12 @@ async def generate(data: InputData):
     config = Config()
     # Генерация ответа с использованием функции generate_response
     if config.classifier ==  'tfidf': # 
-        device, failure_point, serial_number  = extract_and_classify(
+        device, failure_point, serial_number, priority  = extract_and_classify(
             theme=data.topic,
             description=data.description
         )
     elif config.classifier == 'bert':
-        device, failure_point, serial_number  = bert_extract_and_classify(
+        device, failure_point, serial_number, priority  = bert_extract_and_classify(
             theme=data.topic,
             description=data.description
         )
@@ -47,5 +47,6 @@ async def generate(data: InputData):
         "description": data.description,  # Описание
         "device": device,  # Устройство
         "failure_point": failure_point,  # Точка сбоя
-        "serial_number": serial_number  # Серийный номер
+        "serial_number": serial_number,  # Серийный номер
+        "priority": priority,
     }

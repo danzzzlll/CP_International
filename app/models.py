@@ -31,3 +31,4 @@ class ResponseData(BaseModel):
     device: str  # Устройство
     failure_point: str  # Точка сбоя
     serial_number: str  # Серийный номер устройства
+    priority: str

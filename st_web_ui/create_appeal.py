@@ -23,10 +23,10 @@ def print_processed_appeal(response: Dict[str, str]):
     with st.container():
         appeal_info_style()
         st.markdown('<div class="ticket-container">', unsafe_allow_html=True)
-        if response['device'] == "СХД":
-            response['priority'] = "Высокая"
-        elif response['device'] == "Ноутбук" or response['device'] == 'Сервер':
-            response['priority'] = "Средняя"
+        # if response['device'] == "СХД":
+        #     response['priority'] = "Высокая"
+        # elif response['device'] == "Ноутбук" or response['device'] == 'Сервер':
+        #     response['priority'] = "Средняя"
 
         for key, val in response.items():
             if key not in config.json_key_mapping and key != 'priority':
@@ -101,7 +101,9 @@ def create_appeal():
                                 # Обработка запроса
                                 if response.status_code == 200:
                                     st.session_state.response = response.json()  # Сохранение в сессию
-                                    st.session_state.db.add_row(response.json())  # Добавлени в БД
+                                    to_db = dict(response.json())
+                                    del to_db['priority']
+                                    st.session_state.db.add_row(to_db)  # Добавлени в БД
                                     st.session_state.process_btn = True
                                 else:
                                     st.error(f"Ошибка: {response.status_code}. {response.text}")
