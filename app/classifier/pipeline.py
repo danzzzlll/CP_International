@@ -1,8 +1,8 @@
-from .model import ClassificationModel
+from .tfidf.model import ClassificationModel
 from typing import Tuple
 from .extract_series_number import extract_serial_number
-from .bert import TypeBert
-from .inference_llm import get_priority
+from .bert.bert import TypeBert
+from .llm.inference_llm import get_priority
 
 
 def extract_and_classify(theme: str, description: str) ->Tuple[str, str, str]:

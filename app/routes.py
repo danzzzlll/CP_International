@@ -31,6 +31,7 @@ async def generate(data: InputData):
             theme=data.topic,
             description=data.description
         )
+        print(device, failure_point)
     elif config.classifier == 'bert':
         device, failure_point, serial_number, priority  = bert_extract_and_classify(
             theme=data.topic,

@@ -2,7 +2,7 @@ import pymorphy3
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import re
-from .keywords import KeyWords
+from ..keywords import KeyWords
 
 morph = pymorphy3.MorphAnalyzer()
 
@@ -90,5 +90,5 @@ class ClassificationModel:
             category = self.categorize_text(text, threshold=0.07)[0]
         except:
             category = common_word
-            pass
+
         return category

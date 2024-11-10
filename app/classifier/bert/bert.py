@@ -1,6 +1,5 @@
 import logging
-from .model import ClassificationModel
-from .keywords import KeyWords
+from ..keywords import KeyWords
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 

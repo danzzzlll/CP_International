@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from .config import Config
 from .routes import router
-from .classifier import inference_llm
+from .classifier.llm import inference_llm
 
 # Initialize the configuration
 config = Config()
